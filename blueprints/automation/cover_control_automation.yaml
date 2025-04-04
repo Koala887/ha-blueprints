@@ -527,8 +527,8 @@ blueprint:
           selector:
             entity:
               filter:
-              - domain:
-                - input_number
+                - domain:
+                  - input_number
               multiple: false      
           #default: 25
           #selector:
@@ -2019,7 +2019,7 @@ variables:
 
   in_open_position: "{{ (current_position | int(default=101) <= open_position + position_tolerance) and (current_position | int(default=101) >= open_position - position_tolerance) }}"
   in_close_position: "{{ (current_position | int(default=101) <= close_position + position_tolerance) and (current_position | int(default=101) >= close_position - position_tolerance) }}"
-  in_shading_position: "{{ (current_position | int(default=101) <= shading_position + position_tolerance) and (current_position | int(default=101) >= shading_position - position_tolerance) }}"
+  in_shading_position: "{{ (current_position | int(default=101) <= states(shading_position) | int(default=25) + position_tolerance) and (current_position | int(default=101) >= states(shading_position) | int(default=25) - position_tolerance) }}"
   in_ventilate_position: "{{ (current_position | int(default=101) <= ventilate_position + position_tolerance) and (current_position | int(default=101) >= ventilate_position - position_tolerance) }}"
 
   individual_config: !input individual_config
@@ -2547,7 +2547,7 @@ actions:
                             - alias: "Moving the cover to shading position"
                               action: cover.set_cover_position
                               data:
-                                position: !input shading_position
+                                position: "{{ states(shading_position) | int(default=25) }}"
                               target:
                                 entity_id: "{{ repeat.item }}"
                             - if:
@@ -2809,11 +2809,11 @@ actions:
                           - "{{ is_status_helper_enabled }}"
                           - "{{ prevent_lowering_when_closing_if_shaded }}"
                           - "{{ is_cover_helper_shaded }}"
-                          - "{{ close_position > shading_position }}"
+                          - "{{ close_position > states(shading_position) | int(default=25) }}"
                       - and: # Stop if cover is shaded and close position is lower than shading position
                           - "{{ prevent_lowering_when_closing_if_shaded }}"
                           - "{{ in_shading_position }}" # Always, no further checks for 'is_status_helper_enabled'
-                          - "{{ close_position > shading_position }}"
+                          - "{{ close_position > states(shading_position) | int(default=25) }}"
                       - and: # Stop if close-position is higher than the current position
                           - "{{ prevent_higher_position_closing }}"
                           - "{{ (current_position | int(default=101) <= close_position) }}"
@@ -3018,7 +3018,7 @@ actions:
               - alias: "Start Shading"
                 conditions:
                   - "{{ is_cover_helper_shading_start_pending }}"
-                  - "{{ current_position | int(default=101) > shading_position }}"
+                  - "{{ current_position | int(default=101) > states(shading_position) | int(default=25) }}"
                   - or: # Here the shading is executed during the day and therefore the time comparison must be made here.
                       - and:
                           - "{{ is_time_control_disabled }}"
@@ -3060,7 +3060,7 @@ actions:
                             - alias: "Moving the cover to shading position"
                               action: cover.set_cover_position
                               data:
-                                position: !input shading_position
+                                position: "{{ states(shading_position) | int(default=25) }}"
                               target:
                                 entity_id: "{{ repeat.item }}"
                             - if:
@@ -3604,7 +3604,7 @@ actions:
                             - alias: "Moving the cover to shading position"
                               action: cover.set_cover_position
                               data:
-                                position: !input shading_position
+                                position: "{{ states(shading_position) | int(default=25) }}"
                               target:
                                 entity_id: "{{ repeat.item }}"
                             - if:
@@ -3993,7 +3993,7 @@ actions:
                     - alias: "Moving the cover to shading position"
                       action: cover.set_cover_position
                       data:
-                        position: !input shading_position
+                        position: "{{ states(shading_position) | int(default=25) }}"
                       target:
                         entity_id: "{{ repeat.item }}"
                     - if:
