@@ -521,14 +521,21 @@ blueprint:
               unit_of_measurement: "%"
 
         shading_position:
-          name: "🥵 Sun Shading Position"
+          name: "🥵 Sun Shading Position Entity"
           description: "To which position should the cover be moved for shading?"
-          default: 25
+          default: []
           selector:
-            number:
-              min: 0.0
-              max: 100.0
-              unit_of_measurement: "%"
+            entity:
+              filter:
+              - domain:
+                - sensor
+              multiple: false      
+          #default: 25
+          #selector:
+          #  number:
+          #    min: 0.0
+          #    max: 100.0
+          #    unit_of_measurement: "%"
 
         shading_tilt_position:
           name: "🥵 Sun Shading Tilt Position"
