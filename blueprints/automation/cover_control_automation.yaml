@@ -528,7 +528,7 @@ blueprint:
             entity:
               filter:
               - domain:
-                - sensor
+                - input_number
               multiple: false      
           #default: 25
           #selector:
