@@ -531,15 +531,15 @@ blueprint:
                   - input_number
               multiple: false
 
-          shading_position_input:
-            name: "🥵 Sun Shading Position"
-            description: "To which position should the cover be moved for shading?"
-            default: 25
-            selector:
-              number:
-                min: 0.0
-                max: 100.0
-                unit_of_measurement: "%"
+        shading_position_input:
+          name: "🥵 Sun Shading Position"
+          description: "To which position should the cover be moved for shading?"
+          default: 25
+          selector:
+            number:
+              min: 0.0
+              max: 100.0
+              unit_of_measurement: "%"
 
         shading_tilt_position:
           name: "🥵 Sun Shading Tilt Position"
