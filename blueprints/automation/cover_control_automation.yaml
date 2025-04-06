@@ -455,7 +455,19 @@ blueprint:
               min: 0
               max: 100
               unit_of_measurement: "%"
-        close_position:
+
+        close_position_sensor:
+          name: "🔻 Close Position Entity"
+          description: "What position should the cover be moved into when closing?"
+          default: []
+          selector:
+            entity:
+              filter:
+                - domain:
+                  - input_number
+              multiple: false
+
+        close_position_input:
           name: "🔻 Close Position"
           description: "What position should the cover be moved into when closing?"
           default: 0
@@ -1756,7 +1768,8 @@ trigger_variables:
 
   # Positions
   open_position: !input open_position
-  close_position: !input close_position
+  close_position_sensor: !input close_position_sensor
+  close_position_input: !input close_position_input
   shading_position_sensor: !input shading_position_sensor
   shading_position_input: !input shading_position_input
   position_tolerance: !input position_tolerance
@@ -2023,6 +2036,8 @@ variables:
     {% endif %}
 
   shading_position: "{{states(shading_position_sensor) | int(default=shading_position_input)}}"
+
+  close_position: "{{states(close_position_sensor) | int(default=close_position_input)}}"
 
   in_open_position: "{{ (current_position | int(default=101) <= open_position + position_tolerance) and (current_position | int(default=101) >= open_position - position_tolerance) }}"
   in_close_position: "{{ (current_position | int(default=101) <= close_position + position_tolerance) and (current_position | int(default=101) >= close_position - position_tolerance) }}"
@@ -2890,7 +2905,7 @@ actions:
                             - alias: "Moving the cover to close position"
                               action: cover.set_cover_position
                               data:
-                                position: !input close_position
+                                position: "{{ close_position }}"
                               target:
                                 entity_id: "{{ repeat.item }}"
                         - if:
@@ -3738,7 +3753,7 @@ actions:
                                 - alias: "Moving the cover to close position"
                                   action: cover.set_cover_position
                                   data:
-                                    position: !input close_position
+                                    position: "{{ close_position }}"
                                   target:
                                     entity_id: "{{ repeat.item }}"
                             - if:
@@ -3880,7 +3895,7 @@ actions:
                         - alias: "Moving the cover to close position"
                           action: cover.set_cover_position
                           data:
-                            position: !input close_position
+                            position: "{{ close_position }}"
                           target:
                             entity_id: "{{ repeat.item }}"
                     - if:
