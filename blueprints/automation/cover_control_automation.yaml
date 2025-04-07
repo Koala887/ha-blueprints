@@ -464,7 +464,7 @@ blueprint:
             entity:
               filter:
                 - domain:
-                  - input_number
+                    - input_number
               multiple: false
 
         close_position_input:
@@ -540,7 +540,7 @@ blueprint:
             entity:
               filter:
                 - domain:
-                  - input_number
+                    - input_number
               multiple: false
 
         shading_position_input:
