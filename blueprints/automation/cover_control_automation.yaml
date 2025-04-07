@@ -1905,6 +1905,20 @@ variables:
   ventilate_position: !input ventilate_position
   ventilate_tilt_position: !input ventilate_tilt_position
 
+  shading_position: >-
+    {%if shading_position_sensor != [] %}
+      {{ states(shading_position_sensor) | int(default=shading_position_input) }}
+    {% else %}
+      {{ shading_position_input }}
+    {% endif %}
+
+  close_position: >-
+    {%if close_position_sensor != [] %}
+      {{ states(close_position_sensor) | int(default=close_position_input) }}
+    {% else %}
+      {{ close_position_input }}
+    {% endif %}
+
   # Force
   auto_up_force: !input auto_up_force
   auto_down_force: !input auto_down_force
@@ -2034,10 +2048,6 @@ variables:
     {% else %}
       {{ 0 }}
     {% endif %}
-
-  shading_position: "{{states(shading_position_sensor) | int(default=shading_position_input)}}"
-
-  close_position: "{{states(close_position_sensor) | int(default=close_position_input)}}"
 
   in_open_position: "{{ (current_position | int(default=101) <= open_position + position_tolerance) and (current_position | int(default=101) >= open_position - position_tolerance) }}"
   in_close_position: "{{ (current_position | int(default=101) <= close_position + position_tolerance) and (current_position | int(default=101) >= close_position - position_tolerance) }}"
