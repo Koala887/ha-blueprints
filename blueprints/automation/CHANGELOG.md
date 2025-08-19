@@ -319,3 +319,131 @@
   - Added: Additional Condition For Disabling Ventilation
   - Fixed: Small scheduler fix and description also updated
   - Update: Update of the logic and documentation for the resident sensor #158
+
+2025.04.18:
+  - Updated: Just to be more bulletproof, the tilt position control can now be specifically switched on or off. Please activate if necessary. #163
+  - Updated: There is no default value for "Sun Shading Forecast Temperature" here now. To not compare the forecast temperature, leave this field empty. #179
+  - Added: Allow entities of the switch domain as resident sensor or with the force entities #167
+  - Added: New additional actions: Commands can now be executed before opening, closing, shading and ventilation #166
+  - Fixed: Fixed problems resetting manual override #184
+  - Fixed: Make sure that the reset of the manual override is only executed once #178
+  - Fixed: Problems with lockout protection and partial ventilation solved #181
+  - Fixed: There was no latest time for closing the cover when the scheduler was used with sun/brightness #170
+  - Added: Added Sun elevation examples into the description #175
+  - Added: New feature 'Allow opening the cover when resident is still present' #192
+  - Breaking change: Please reconfigure "Allow sun protection when resident is still present" ('resident_shading_enabled' was renamed)
+
+2025.05.02-01:
+  - Fixed: Also take into account for shading that a door contact only needs to be tested when ventilation mode is switched on #197
+  - Fixed: Removed protocol error that occurs during manual execution.
+  - Added: Catching an incorrect weather configuration
+  - Added: Ability to specify an existing sensor if it already provides daily maximum temperature forecast instead of weather entity #199
+  - Added: Add hysteresis for temperature sensor based shading #189
+
+2025.05.02-02:
+  - Fixed: A bug has been fixed that caused the shading to be recognized but not executed. But only if shading was only allowed to be executed once a day.
+
+2025.05.04:
+  - Added: Allow immediate ending of shading if the sun is out of the defined azimuth or elevation range.
+  - Added: Option to close cover instead of opening when shading ends (ideal for awnings)
+  - Updated: Note that the weather sensor specification is optional #198
+
+2025.05.07:
+  - Fixed: Shading is now also recognized and temporarily stored in the helper if the resident sensor contains the value true. #131
+  - Added: Tilt Reposition Feature (Thanks for the pull request, Astado) #196
+  - Update: Better textual clarification of what the result of the additional condition should look like #204
+  - Update: Only shade the cover when it is not in the shading position. Purely as a precautionary measure in case the target state and actual state do not match.
+
+2025.05.11:
+  - Fixed: Fixed bug that the cover can be opened again by the time-up-late-trigger despite existing shading.
+  - 
+2025.05.12:
+  - Fixed: Multiple triggering of a detected shading has skipped the waiting time until execution #206
+
+2025.05.13
+  - Fixed: The nightly shading reset has changed the timestamp and therefore a new shading with active 'prevent_shading_multiple_times' can never be executed.
+
+2025.05.14
+  - Added: Falling below shading_elevation_max now also triggers Shading Start #193
+  - Fixed: When detecting manual position changes, values greater than Ventilation were incorrectly assumed to be Open. This was too wide-ranging.
+
+2025.05.20
+  - Fixed: Wrong default value for shading_forecast_temp
+
+2025.05.27
+  - Updated: Revised information text for configuring the position configuration
+  - Added: The schedule helper state has been added as a variable. This is just for debugging purposes. #214
+  - Fixed: The problems with the start of shading have been corrected. #212 #211
+    If the shading conditions were not still fulfilled after the end of the waiting time, the sun protection was sometimes not activated correctly.
+    Now we have a new feature and we can select the following options:
+      - If the conditions were not permanently fulfilled, we can wait for another trigger to be executed. The previous pending status is now successfully reset.
+      - And much better: CCA can be configured so that we can periodically check the shading during the day. The system then checks again and again until the conditions are valid again.
+
+2025.06.07
+  - Added: Resident check for ventilation #216 (Thanks for the pull request, Astado)
+  - Added: Better description for shading_forecast_sensor (Thanks you, Eimeel)
+  - Fixed: Solve Issue with sun shading end if Tilt Position Control is enabled #216 (Thanks for the pull request, Astado)
+  - Fixed: Shades are being opened or closed even if they are already #219
+  - Fixed:
+    When the “End Sun Shading Immediately When Out Of Range” mode was activated, the shading of the cover was not canceled.
+    This was because the new waiting time was set to 0 seconds and CCA could not trigger itself in the same second via a helper.
+  - Updated: Extensive code refactoring
+  - Updated:
+    Automation mode changed to 'single' as a test, because otherwise new triggers in the delay would interfere with processing.
+    In the worst case, I will have to work with {{ state_attr('automation.cca_automation', 'current') > 0 }} as before to be able
+    to intercept the reciprocal triggers.
+
+2025.06.10
+  - Fixed: The detection of weekdays and weekends is working again.
+
+2025.06.11
+  - Fixed: Error fixed if the Workday Tomorrow sensor was not specified
+
+2025.06.12
+  - Fixed: Increased the delay to 20 seconds for the “End Sun Shading Immediately When Out Of Range” feature. This change aims to ensure the new trigger executes reliably, as Home Assistant appears to ignore shorter delay values.
+  - Updated: Refactored helper_state_json to include a more robust fallback mechanism.
+  - Improved: Shading end triggers have been restructured to activate only when shading is currently active.
+  - Refactored: Codebase has been restructured to use YAML anchors, improving maintainability and reducing redundancy.
+
+2025.06.13-02
+  - Fixed incorrect use of is_state() with potentially invalid inputs
+  - Improved robustness using states() with type checks
+  - Handled optional workday sensor inputs gracefully
+
+2025.06.19:
+  - Fixed: Tilt Delay added again
+  - Fixed: Even though no shading was explicitly applied, the shading has ended for a closed cover #226
+  - Added: Add sun shading minimum tilt position (Thank you for the pull request, julianwachholz) #230
+
+2025.07.10:
+  - Fixed an issue where shading could not be activated while tilt mode was active
+  - Fixed a bug where shading would start unexpectedly even though the sun was on the opposite side of the building (#244)
+  - Fixed a failure in the lockout protection mechanism (#225)
+  - Fixed an issue where forced tilt reset was not skipped when changing tilt positions (#241)
+  - Fixed a bug where shading end conditions were not properly checked (#229)
+  - Added: Option to additionally allow temperature+forecast-only shading (#238)
+  - Added: Configuration option to compare forecast temperature with Sensor 2 (#238)
+  - Memo: Slight adjustment to the calculation of is_helper_shaded: pending shading end is no longer considered.
+
+2025.07.22:
+  - Fixed: Prevent 'startswith' error by validating shading_forecast_sensor type
+  - Removed default weather condition presets for sun shading activation.
+  - Moved shading condition checks from trigger to condition block to prevent unintended triggering on cover_status_helper state changes.
+    
+2025.07.23:
+  - Removed default brightness-based control activation due to potential errors when the brightness sensor is not configured in the default blueprint. This feature can still be enabled manually as before.
+  - Editorial changes to the shading instructions
+
+2025.07.30:
+  - Fixed: Shading not ending when condition changed in previous waiting time #258
+  - Fixed: Shading not ending because of general conditions #257
+  - Fix only tilt open is not ending shading #255
+
+2025.08.07:
+  - Fixed a bug where shading was not disabled when the weather sensor or optional weather conditions were not set #258
+
+2025.08.10:
+  - Minor updates
+
+2025.08.15:
+  - Fixed: In rare cases, global conditions prevented the helper from being pre-filled #270
